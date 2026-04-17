@@ -1,10 +1,13 @@
- import './App.css'
+ import './App.css';
+ import { Routes, Route } from "react-router-dom";
+ import LoginPage from './feature/login/LoginPage';
 
 function App() {
-
   return (
-   <h1>Welcome to Axon EMS!</h1>
-  )
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+    </Routes>
+  ) 
 }
 
 export default App

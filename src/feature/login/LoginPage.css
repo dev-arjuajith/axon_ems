@@ -1,0 +1,44 @@
+.login-container {
+    margin-top: 110px;
+    margin-bottom: 110px;
+    max-width: 448px;
+    background-color: #fff;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    padding: 48px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.ms-sigin {
+    display: flex;
+    border: solid 1px #C3C6D1;
+    border-radius: 8px;
+    padding: 14px;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Input */
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: none;
+  background-color: #f3f4f6;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.footer {
+    width: 100%;
+    background-color: #F7F9FB;
+    padding: 32px;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
