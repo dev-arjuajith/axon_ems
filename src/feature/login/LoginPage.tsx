@@ -15,7 +15,7 @@ const LoginPage = () => {
       {/* {login container} */}
       <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
         <div className='login-container'>
-          <img src={logo} alt="" style={{height: '36px', width: '36px', objectFit: 'contain'}} />
+          <img src={logo} alt="" style={{height: '36px', width: '36px', objectFit: 'contain', display: 'block'}} />
           <SizedBox height={14}></SizedBox>
           <Text size={30} weight={'bold'}> Axon EMS</Text>
           <SizedBox height={8}></SizedBox>
