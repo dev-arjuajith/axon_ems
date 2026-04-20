@@ -37,16 +37,61 @@ const profileData = {
 const Profile: React.FC = () => {
   const [data, setData] = useState(profileData);
   const [isEditing, setIsEditing] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (field: keyof typeof data.personalDetails, value: string) => {
     setData((prev) => ({
       ...prev,
       personalDetails: { ...prev.personalDetails, [field]: value }
     }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handlePhoneChange = (field: 'phoneNumber' | 'emergencyContactNumber', value: string) => {
+    // Restrict input exclusively to valid phone characters (digits, plus, minus, spaces, parenthesis)
+    const formattedValue = value.replace(/[^\d\s\-\+\(\)]/g, '');
+    handleInputChange(field, formattedValue);
+  };
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    const { phoneNumber, personalEmail, emergencyContactName, emergencyContactNumber } = data.personalDetails;
+    
+    
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "Required";
+    } else if (!/^\+?[\d\s\-\(\)]+$/.test(phoneNumber)) {
+      newErrors.phoneNumber = "Invalid phone format";
+    }
+
+    if (!personalEmail.trim()) {
+      newErrors.personalEmail = "Required";
+    } else if (!/^\S+@\S+\.\S+$/.test(personalEmail)) {
+      newErrors.personalEmail = "Invalid email format";
+    }
+
+    if (!emergencyContactName.trim()) newErrors.emergencyContactName = "Required";
+    
+    if (!emergencyContactNumber.trim()) {
+      newErrors.emergencyContactNumber = "Required";
+    } else if (!/^\+?[\d\s\-\(\)]+$/.test(emergencyContactNumber)) {
+      newErrors.emergencyContactNumber = "Invalid phone format";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const toggleEdit = () => {
-    setIsEditing(!isEditing);
+    if (isEditing) {
+      if (validate()) {
+        setIsEditing(false);
+      }
+    } else {
+      setIsEditing(true);
+    }
   };
 
   return (
@@ -107,26 +152,31 @@ const Profile: React.FC = () => {
             <div className="form-group">
               <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">DATE OF JOINING</Text>
               <SizedBox height={8} />
-              {isEditing ? (
-                <input className="input-field full-width" value={data.personalDetails.dateOfJoining} onChange={(e) => handleInputChange('dateOfJoining', e.target.value)} />
-              ) : (
-                <div className="input-field">{data.personalDetails.dateOfJoining || "-"}</div>
-              )}
+              <div 
+                className="input-field" 
+                style={isEditing ? { backgroundColor: '#F1F5F9', color: '#9CA3AF', cursor: 'not-allowed' } : {}}
+              >
+                {data.personalDetails.dateOfJoining || "-"}
+              </div>
             </div>
             <div className="form-group">
               <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">DEPARTMENT</Text>
               <SizedBox height={8} />
-              {isEditing ? (
-                <input className="input-field full-width" value={data.personalDetails.department} onChange={(e) => handleInputChange('department', e.target.value)} />
-              ) : (
-                <div className="input-field">{data.personalDetails.department || "-"}</div>
-              )}
+              <div 
+                className="input-field" 
+                style={isEditing ? { backgroundColor: '#F1F5F9', color: '#9CA3AF', cursor: 'not-allowed' } : {}}
+              >
+                {data.personalDetails.department || "-"}
+              </div>
             </div>
             <div className="form-group">
               <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">PHONE NUMBER</Text>
               <SizedBox height={8} />
               {isEditing ? (
-                <input className="input-field full-width" value={data.personalDetails.phoneNumber} onChange={(e) => handleInputChange('phoneNumber', e.target.value)} />
+                <>
+                  <input type="tel" className="input-field full-width" style={errors.phoneNumber ? { borderColor: 'red' } : {}} value={data.personalDetails.phoneNumber} onChange={(e) => handlePhoneChange('phoneNumber', e.target.value)} />
+                  {errors.phoneNumber && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.phoneNumber}</div>}
+                </>
               ) : (
                 <div className="input-field">{data.personalDetails.phoneNumber || "-"}</div>
               )}
@@ -135,7 +185,10 @@ const Profile: React.FC = () => {
               <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">PERSONAL EMAIL</Text>
               <SizedBox height={8} />
               {isEditing ? (
-                <input className="input-field full-width" value={data.personalDetails.personalEmail} onChange={(e) => handleInputChange('personalEmail', e.target.value)} />
+                <>
+                  <input type="email" className="input-field full-width" style={errors.personalEmail ? { borderColor: 'red' } : {}} value={data.personalDetails.personalEmail} onChange={(e) => handleInputChange('personalEmail', e.target.value)} />
+                  {errors.personalEmail && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.personalEmail}</div>}
+                </>
               ) : (
                 <div className="input-field">{data.personalDetails.personalEmail || "-"}</div>
               )}
@@ -151,7 +204,10 @@ const Profile: React.FC = () => {
               <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">NAME & RELATION</Text>
               <SizedBox height={8} />
               {isEditing ? (
-                <input className="input-field full-width" value={data.personalDetails.emergencyContactName} onChange={(e) => handleInputChange('emergencyContactName', e.target.value)} />
+                <>
+                  <input className="input-field full-width" style={errors.emergencyContactName ? { borderColor: 'red' } : {}} value={data.personalDetails.emergencyContactName} onChange={(e) => handleInputChange('emergencyContactName', e.target.value)} />
+                  {errors.emergencyContactName && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.emergencyContactName}</div>}
+                </>
               ) : (
                 <div className="input-field">{data.personalDetails.emergencyContactName || "-"}</div>
               )}
@@ -161,7 +217,10 @@ const Profile: React.FC = () => {
               <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">MOBILE NUMBER</Text>
               <SizedBox height={8} />
               {isEditing ? (
-                <input className="input-field full-width" value={data.personalDetails.emergencyContactNumber} onChange={(e) => handleInputChange('emergencyContactNumber', e.target.value)} />
+                <>
+                  <input type="tel" className="input-field full-width" style={errors.emergencyContactNumber ? { borderColor: 'red' } : {}} value={data.personalDetails.emergencyContactNumber} onChange={(e) => handlePhoneChange('emergencyContactNumber', e.target.value)} />
+                  {errors.emergencyContactNumber && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.emergencyContactNumber}</div>}
+                </>
               ) : (
                 <div className="input-field">{data.personalDetails.emergencyContactNumber || "-"}</div>
               )}
