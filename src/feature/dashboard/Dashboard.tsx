@@ -2,14 +2,15 @@ import { useState } from 'react'
 import './Dashboard.css';
 import Text from '../../components/Text';
 import SizedBox from '../../components/SizedBox';
-import { AppColors } from '../../core/colors';
 import dashboardLogo from '../../assets/dashboard.svg';
 import attendanceLogo from '../../assets/attendance.svg';
 import leaveLogo from '../../assets/leave_request.svg';
 import profileLogo from '../../assets/profile.svg';
 import supportLogo from '../../assets/support.svg';
 import LogoutLogo from '../../assets/logout.svg';
+import { useParams, useNavigate } from 'react-router-dom';
 import NavCard from './NavCard';
+import Profile from '../profile/Profile';
 
 function Dashboard() {
 
@@ -21,8 +22,10 @@ function Dashboard() {
     { id: "support", label: "Support", icon: supportLogo },
     { id: "logout", label: "Logout", icon: LogoutLogo },
   ];
-  
-  const [activeNav, setActiveNav] = useState("dashboard");
+  const { tabId } = useParams();
+  const navigate = useNavigate();
+  const activeNav = tabId || "dashboard";
+  const activeNavObj = navItems.find((item) => item.id === activeNav) || navItems[0];
   return (
     <div style={{display: "flex", width: '100%', minHeight: '100vh', margin: '0px'}}>
       <div className='drawer-container'>
@@ -35,7 +38,7 @@ function Dashboard() {
               text={item.label}
               logo={item.icon}
               isSelected={activeNav === item.id}
-              onClick={() => setActiveNav(item.id)}
+              onClick={() => navigate(`/${item.id}`)}
             />
           ))}
         </div>
@@ -47,8 +50,13 @@ function Dashboard() {
         </div>
 
       </div>
-      <div className='content-container'>
-        {activeNav}
+      <div className='content-container' style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <Text size={24} weight='bold'>{activeNavObj.label}</Text>
+        </div>
+        <div style={{ flex: 1 }}>
+          {activeNav === 'profile' ? <Profile /> : activeNav}
+        </div>
       </div>
     </div>
     

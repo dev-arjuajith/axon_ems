@@ -2,7 +2,7 @@
     padding: 24px;
     width: 256px;
     background-color: #F2F4F6;
-    min-height: '100vh';
+    min-height: 100vh;
 }
 
 .nav-card {
@@ -27,6 +27,10 @@
   background-color: white;
 }
 
-.content-container{
-  padding: 12px;
+.content-container {
+  padding: 32px;
+  flex: 1;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+  overflow-y: auto;
 }
