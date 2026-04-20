@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './Profile.css';
 import Text from '../../components/Text';
 import PrimaryButton from '../../components/PrimaryButton';
@@ -38,6 +38,22 @@ const Profile: React.FC = () => {
   const [data, setData] = useState(profileData);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size should be less than 5 MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setData((prev) => ({ ...prev, avatar: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleInputChange = (field: keyof typeof data.personalDetails, value: string) => {
     setData((prev) => ({
@@ -100,8 +116,17 @@ const Profile: React.FC = () => {
       <div className="profile-header-card">
         <div className="profile-header-left">
           <div className="avatar-wrapper">
-            <img src={profileData.avatar} alt="Profile" className="profile-avatar" />
-            <div className="camera-icon">📷</div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handleAvatarChange} 
+            />
+            <img src={data.avatar} alt="Profile" className="profile-avatar" />
+            {isEditing && (
+              <div className="camera-icon" onClick={() => fileInputRef.current?.click()}>📷</div>
+            )}
           </div>
           <div className="profile-info-main">
             <div className="name-badge-row">
