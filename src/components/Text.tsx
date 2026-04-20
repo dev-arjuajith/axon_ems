@@ -9,6 +9,7 @@ type TextProps = {
   weight?: string | number;
   height?: string | number;
   align?: "left" | "center" | "right";
+  cursor?: string & {};
 };
 
 const Text: React.FC<TextProps> = ({
@@ -18,6 +19,7 @@ const Text: React.FC<TextProps> = ({
   color = AppColors.text.primary,
   weight = "normal",
   align = "left",
+  cursor = null,
 }) => {
   return (
     <p
@@ -28,6 +30,7 @@ const Text: React.FC<TextProps> = ({
         fontWeight: weight,
         textAlign: align,
         margin: 0,
+        cursor: cursor,
       }}
     >
       {children}

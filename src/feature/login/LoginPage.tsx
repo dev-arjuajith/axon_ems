@@ -53,7 +53,7 @@ const LoginPage = () => {
           <>
             <div style={{width: '100%',display: 'flex', justifyContent: 'space-between'}}>
               <Text size={14} weight='600'>Password</Text>
-              <Text size={14} weight='600'>Forgot Password?</Text>
+              <Text size={14} weight='600' cursor='pointer' >Forgot Password?</Text>
             </div>
             <SizedBox height={8}></SizedBox>
             <div></div>
@@ -69,7 +69,7 @@ const LoginPage = () => {
           <div style={{display: 'flex'}}>
             <Text size={14} weight={'normal'}> New to the platform? </Text>
             <SizedBox width={5}></SizedBox>
-            <Text size={14} weight={'500'}> Request Access </Text>
+            <Text size={14} weight={'600'} cursor= 'pointer'> Request Access </Text>
           </div>
         </div>
       </div>
