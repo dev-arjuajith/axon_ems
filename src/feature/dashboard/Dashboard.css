@@ -1,0 +1,32 @@
+.drawer-container {
+    padding: 24px;
+    width: 256px;
+    background-color: #F2F4F6;
+    min-height: '100vh';
+}
+
+.nav-card {
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-card.selected {
+  background-color: white;
+}
+
+.nav-card:hover {
+  background-color: #FFFFFF80;
+}
+
+.nav-card.selected:hover {
+  background-color: white;
+}
+
+.content-container{
+  padding: 12px;
+}

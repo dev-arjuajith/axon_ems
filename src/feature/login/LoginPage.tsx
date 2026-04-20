@@ -7,7 +7,14 @@ import msLogo from '../../assets/ms_logo.jpg';
 import { AppColors } from '../../core/colors';
 import FixedBg from '../../components/FixedBg';
 import PrimaryButton from '../../components/PrimaryButton';
+import { useNavigate } from "react-router-dom";
 const LoginPage = () => {
+  const navigate = useNavigate();
+
+  function handleLogin() {
+    navigate("/");
+  }
+  
   return (
     <>
       {/* ✅ Background */}
@@ -64,7 +71,7 @@ const LoginPage = () => {
             />
           </>
           <SizedBox height={24}></SizedBox>
-          <PrimaryButton text='Sign in'></PrimaryButton>
+          <PrimaryButton text='Sign in' onClick={handleLogin}></PrimaryButton>
           <SizedBox height={32}></SizedBox>
           <div style={{display: 'flex'}}>
             <Text size={14} weight={'normal'}> New to the platform? </Text>
