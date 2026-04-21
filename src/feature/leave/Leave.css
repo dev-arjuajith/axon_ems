@@ -1,0 +1,83 @@
+.leave-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.leave-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+}
+
+.top-card {
+  background-color: #F4F6F8;
+  padding: 40px;
+  border: none;
+}
+
+.raise-request-btn {
+  background-color: #001E40;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0px 4px 6px rgba(0, 30, 64, 0.1);
+}
+
+.raise-request-btn:hover {
+  background-color: #003366;
+}
+
+.download-pdf-btn {
+  background-color: #C2D4F0;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.download-pdf-btn:hover {
+  background-color: #A3BFED;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.history-table th {
+  background-color: #F8FAFC;
+  padding: 16px 24px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #E5E7EB;
+  border-top: 1px solid #E5E7EB;
+}
+
+.history-table td {
+  padding: 20px 24px;
+  border-bottom: 1px solid #F1F5F9;
+  vertical-align: middle;
+}
+
+.history-table tr:hover {
+  background-color: #FAFAFA;
+}
