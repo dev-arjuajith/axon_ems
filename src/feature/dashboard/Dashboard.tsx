@@ -12,6 +12,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import NavCard from './NavCard';
 import Profile from '../profile/Profile';
 import Leave from '../leave/Leave';
+import Attendance from '../attendance/Attendance';
 
 function Dashboard() {
 
@@ -56,7 +57,7 @@ function Dashboard() {
           <Text size={24} weight='bold'>{activeNavObj.label}</Text>
         </div>
         <div style={{ flex: 1 }}>
-          {activeNav === 'profile' ? <Profile /> : activeNav === 'leave' ? <Leave /> : activeNav}
+          {activeNav === 'profile' ? <Profile /> : activeNav === 'leave' ? <Leave /> : activeNav === 'attendance' ? <Attendance /> : activeNav}
         </div>
       </div>
     </div>

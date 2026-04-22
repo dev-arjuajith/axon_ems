@@ -1,0 +1,237 @@
+.attendance-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 24px;
+}
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.2fr;
+  gap: 16px;
+}
+
+.stat-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.stat-card.dark {
+  background: #001E40;
+  border: none;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #001E40;
+  margin: 4px 0 8px 0;
+  line-height: 1.1;
+}
+
+.stat-value.light {
+  color: #FFFFFF;
+}
+
+.improvement-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #16A34A;
+}
+
+.leave-progress {
+  height: 4px;
+  background-color: #E5E7EB;
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.leave-progress-fill {
+  height: 100%;
+  background-color: #001E40;
+  border-radius: 2px;
+}
+
+/* Main Content */
+.attendance-main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Log Card */
+.log-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.log-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 24px 20px 24px;
+}
+
+.log-nav-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.log-nav-btn {
+  background: none;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #001E40;
+  transition: background-color 0.2s;
+}
+
+.log-nav-btn:hover {
+  background-color: #F8FAFC;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.attendance-table th {
+  background-color: #F8FAFC;
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+  text-align: left;
+}
+
+.attendance-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 14px;
+  color: #374151;
+}
+
+.attendance-table tr:last-child td {
+  border-bottom: none;
+}
+
+.attendance-table tr:hover td {
+  background-color: #FAFAFA;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-on-time  { background: #DCFCE7; color: #16A34A; }
+.badge-late-in  { background: #FEF3C7; color: #D97706; }
+.badge-wfh      { background: #DBEAFE; color: #2563EB; }
+.badge-leave    { background: #FEE2E2; color: #DC2626; }
+.badge-holiday  { background: #EDE9FE; color: #7C3AED; }
+.badge-absent   { background: #F1F5F9; color: #64748B; }
+
+/* Right Column */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.side-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* Holidays */
+.holiday-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.holiday-item:last-of-type {
+  border-bottom: none;
+}
+
+.holiday-date-box {
+  background: #EEF2FF;
+  border-radius: 8px;
+  width: 44px;
+  min-width: 44px;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.view-all-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #001E40;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.view-all-btn:hover {
+  background-color: #F8FAFC;
+}
+
+/* Active Requests */
+.request-item {
+  border-left: 3px solid;
+  padding: 10px 12px;
+  border-radius: 0 8px 8px 0;
+  background: #F8FAFC;
+  margin-bottom: 10px;
+}
+
+.request-item:last-child {
+  margin-bottom: 0;
+}
+
+.request-count-badge {
+  background: #001E40;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
