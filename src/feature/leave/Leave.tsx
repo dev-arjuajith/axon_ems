@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Text from '../../components/Text';
 import SizedBox from '../../components/SizedBox';
 import { AppColors } from '../../core/colors';
+import LeaveCalendar from './LeaveCalendar';
 import './Leave.css';
 
 const leaveHistoryData = [
@@ -30,9 +31,35 @@ const leaveHistoryData = [
 
 const Leave = () => {
   const [history, setHistory] = useState(leaveHistoryData);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  const handleLeaveSubmit = (selectedDates: Date[], leaveType: string, reason: string) => {
+    // Format dates for display
+    const formatDate = (date: Date) => {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${months[date.getMonth()]} ${date.getDate()}`;
+    };
+
+    const duration = selectedDates.length === 1 
+      ? `${formatDate(selectedDates[0])} (1 Day)`
+      : `${formatDate(selectedDates[0])} - ${formatDate(selectedDates[selectedDates.length - 1])} (${selectedDates.length} Days)`;
+
+    const newRequest = {
+      id: `#L-${Math.floor(Math.random() * 10000)}`,
+      type: leaveType,
+      duration,
+      appliedOn: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      status: 'Pending',
+    };
+
+    setHistory([newRequest, ...history]);
+    setIsCalendarOpen(false);
+  };
 
   const StatusBadge = ({ status }: { status: string }) => {
     const isApproved = status === 'Approved';
+    const isPending = status === 'Pending';
+    const color = isApproved ? AppColors.success : isPending ? AppColors.warning : AppColors.error;
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
         <div 
@@ -40,10 +67,10 @@ const Leave = () => {
             width: '6px', 
             height: '6px', 
             borderRadius: '50%', 
-            backgroundColor: isApproved ? AppColors.success : AppColors.error 
+            backgroundColor: color
           }} 
         />
-        <Text size={14} weight="600" color={isApproved ? AppColors.success : AppColors.error}>
+        <Text size={14} weight="600" color={color}>
           {status}
         </Text>
       </div>
@@ -52,6 +79,11 @@ const Leave = () => {
 
   return (
     <div className="leave-container">
+      <LeaveCalendar 
+        isOpen={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        onSubmit={handleLeaveSubmit}
+      />
       {/* Top Card */}
       <div className="leave-card top-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -64,7 +96,7 @@ const Leave = () => {
               Submit your request for time off or remote work. All requests are processed within 24 business hours by your department lead.
             </Text>
           </div>
-          <button className="raise-request-btn">
+          <button className="raise-request-btn" onClick={() => setIsCalendarOpen(true)}>
             + Raise Request
           </button>
         </div>

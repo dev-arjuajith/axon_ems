@@ -1,0 +1,253 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #64748B;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: #001E40;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #F8FAFC;
+  border-radius: 8px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #001E40;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.nav-btn:hover {
+  background-color: #E5E7EB;
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  padding: 12px;
+  background-color: #F8FAFC;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.wfh-dot {
+  background-color: #F59E0B;
+}
+
+.leave-dot {
+  background-color: #DC2626;
+}
+
+.holiday-dot {
+  background-color: #8B5CF6;
+}
+
+.selected-dot {
+  background-color: #001E40;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.day-name {
+  text-align: center;
+  padding: 12px 0;
+  font-weight: 600;
+}
+
+.calendar-date {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.calendar-date:hover {
+  background-color: #F1F5F9;
+}
+
+.calendar-date.other-month {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.calendar-date.other-month:hover {
+  background-color: transparent;
+}
+
+.calendar-date.selected {
+  background-color: #001E40;
+  color: #FFFFFF;
+  border-color: #001E40;
+}
+
+.calendar-date.selected p {
+  color: #FFFFFF !important;
+}
+
+.calendar-date.wfh {
+  background-color: #FEF3C7;
+  border-color: #F59E0B;
+}
+
+.calendar-date.leave {
+  background-color: #FEE2E2;
+  border-color: #DC2626;
+}
+
+.calendar-date.holiday {
+  background-color: #EDE9FE;
+  border-color: #8B5CF6;
+}
+
+.leave-type-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #001E40;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.leave-type-select:focus {
+  outline: none;
+  border-color: #001E40;
+}
+
+.reason-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #001E40;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.reason-textarea:focus {
+  outline: none;
+  border-color: #001E40;
+}
+
+.reason-textarea::placeholder {
+  color: #94A3B8;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  padding: 12px 24px;
+  border: 1px solid #E5E7EB;
+  background-color: #FFFFFF;
+  color: #64748B;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.submit-btn {
+  padding: 12px 24px;
+  background-color: #001E40;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0px 4px 6px rgba(0, 30, 64, 0.1);
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #003366;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
