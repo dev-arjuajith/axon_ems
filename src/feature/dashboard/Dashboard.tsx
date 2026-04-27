@@ -13,6 +13,7 @@ import NavCard from './NavCard';
 import Profile from '../profile/Profile';
 import Leave from '../leave/Leave';
 import Attendance from '../attendance/Attendance';
+import DashboardHome from './DashboardHome';
 
 function Dashboard() {
 
@@ -65,11 +66,13 @@ function Dashboard() {
 
       </div>
       <div className='content-container' style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ marginBottom: '24px' }}>
-          <Text size={24} weight='bold'>{activeNavObj.label}</Text>
-        </div>
+        {activeNav !== 'dashboard' && (
+          <div style={{ marginBottom: '24px' }}>
+            <Text size={24} weight='bold'>{activeNavObj.label}</Text>
+          </div>
+        )}
         <div style={{ flex: 1 }}>
-          {activeNav === 'profile' ? <Profile /> : activeNav === 'leave' ? <Leave /> : activeNav === 'attendance' ? <Attendance /> : activeNav}
+          {activeNav === 'dashboard' ? <DashboardHome /> : activeNav === 'profile' ? <Profile /> : activeNav === 'leave' ? <Leave /> : activeNav === 'attendance' ? <Attendance /> : activeNav}
         </div>
       </div>
       {isLogoutModalOpen && (
