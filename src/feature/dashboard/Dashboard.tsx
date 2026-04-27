@@ -28,6 +28,12 @@ function Dashboard() {
   const navigate = useNavigate();
   const activeNav = tabId || "dashboard";
   const activeNavObj = navItems.find((item) => item.id === activeNav) || navItems[0];
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const handleLogoutConfirm = () => {
+    sessionStorage.clear();
+    navigate('/login');
+  };
   return (
     <div style={{display: "flex", width: '100%', minHeight: '100vh', margin: '0px'}}>
       <div className='drawer-container'>
@@ -40,7 +46,13 @@ function Dashboard() {
               text={item.label}
               logo={item.icon}
               isSelected={activeNav === item.id}
-              onClick={() => navigate(`/${item.id}`)}
+              onClick={() => {
+                if (item.id === 'logout') {
+                  setIsLogoutModalOpen(true);
+                } else {
+                  navigate(`/${item.id}`);
+                }
+              }}
             />
           ))}
         </div>
@@ -60,8 +72,19 @@ function Dashboard() {
           {activeNav === 'profile' ? <Profile /> : activeNav === 'leave' ? <Leave /> : activeNav === 'attendance' ? <Attendance /> : activeNav}
         </div>
       </div>
+      {isLogoutModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <Text size={20} weight="bold">Confirm Logout</Text>
+            <Text size={16} color="#4B5563">Are you sure you want to log out of your account?</Text>
+            <div className="modal-actions">
+              <button className="cancel-button" onClick={() => setIsLogoutModalOpen(false)}>Cancel</button>
+              <button className="confirm-button" onClick={handleLogoutConfirm}>Logout</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-    
   )
 }
 
