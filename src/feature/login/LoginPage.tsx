@@ -8,11 +8,36 @@ import { AppColors } from '../../core/colors';
 import FixedBg from '../../components/FixedBg';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { loginApi } from '../../core/api';
+
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleLogin() {
-    navigate("/");
+  async function handleLogin() {
+    if (!email || !password) {
+      window.alert('Please enter both email and password.');
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const data = await loginApi(email, password);
+      
+      sessionStorage.setItem('access_token', data.access_token || data.accessToken || data.token);
+      if (data.refresh_token || data.refreshToken) {
+        sessionStorage.setItem('refresh_token', data.refresh_token || data.refreshToken);
+      }
+      navigate("/");
+    } catch (err: any) {
+      window.alert(err.message || 'Network error. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   }
   
   return (
@@ -54,6 +79,8 @@ const LoginPage = () => {
               type="email"
               placeholder="name@axonmeridian.com"
               className="input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </>
           <SizedBox height={24}></SizedBox>
@@ -68,10 +95,12 @@ const LoginPage = () => {
               type="password"
               placeholder="**********"
               className="input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </>
           <SizedBox height={24}></SizedBox>
-          <PrimaryButton text='Sign in' onClick={handleLogin}></PrimaryButton>
+          <PrimaryButton text={isLoading ? 'Signing in...' : 'Sign in'} onClick={handleLogin}></PrimaryButton>
           <SizedBox height={32}></SizedBox>
           <div style={{display: 'flex'}}>
             <Text size={14} weight={'normal'}> New to the platform? </Text>
