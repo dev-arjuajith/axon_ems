@@ -1,44 +1,76 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Profile.css';
 import Text from '../../components/Text';
 import PrimaryButton from '../../components/PrimaryButton';
 import SizedBox from '../../components/SizedBox';
+import { getProfileApi, updateProfileApi } from '../../core/api';
 
-const profileData = {
-  id: "AX-1024",
-  name: "Alex Sterling",
-  role: "Junior Developer",
-  department: "Engineering Department",
-  joinedDate: "June 12, 2023",
-  avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&q=80",
-  reportsTo: {
-    name: "Sarah Jenkins",
-    role: "Lead Developer",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&q=80",
-  },
-  personalDetails: {
-    dateOfJoining: "June 12, 2023",
-    department: "Engineering",
-    phoneNumber: "+1 (555) 012-3456",
-    personalEmail: "alex.sterling@email.com",
-    emergencyContactName: "Robert Sterling (Father)",
-    emergencyContactNumber: "+1 (555) 999-8888",
-  },
-  workAccess: {
-    badgeAccess: { level: "Level 1 - Engineering", icon: "🗝️" },
-    gitAccount: { username: "alex_axon_dev", icon: "💻" }
-  },
-  leaveBalance: {
-    vacationDays: { total: 15, used: 12 },
-    sickLeave: { total: 5, used: 5 }
-  }
-};
+interface Manager {
+  name: string;
+  role: string;
+  avatar: string | null;
+}
+
+interface PersonalDetails {
+  dateOfJoining: string;
+  department: string;
+  phoneNumber: string;
+  personalEmail: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+}
+
+interface WorkAccess {
+  type: string;
+  value: string;
+  level: string;
+  icon: string;
+}
+
+interface LeaveBalance {
+  leaveType: string;
+  total: number;
+  used: number;
+}
+
+interface ProfileData {
+  id: string;
+  name: string;
+  role: string;
+  department: string;
+  joinedDate: string;
+  avatar: string | null;
+  reportsTo: Manager | null;
+  personalDetails: PersonalDetails;
+  workAccess: WorkAccess[];
+  leaveBalance: LeaveBalance[];
+}
 
 const Profile: React.FC = () => {
-  const [data, setData] = useState(profileData);
+  const [data, setData] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await getProfileApi();
+      if (response.success) {
+        setData(response.data);
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to load profile");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,48 +81,50 @@ const Profile: React.FC = () => {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setData((prev) => ({ ...prev, avatar: reader.result as string }));
+        setData((prev) => prev ? { ...prev, avatar: reader.result as string } : null);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleInputChange = (field: keyof typeof data.personalDetails, value: string) => {
-    setData((prev) => ({
-      ...prev,
-      personalDetails: { ...prev.personalDetails, [field]: value }
-    }));
+  const handleInputChange = (field: keyof PersonalDetails, value: string) => {
+    setData((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        personalDetails: { ...prev.personalDetails, [field]: value }
+      };
+    });
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const handlePhoneChange = (field: 'phoneNumber' | 'emergencyContactNumber', value: string) => {
-    // Restrict input exclusively to valid phone characters (digits, plus, minus, spaces, parenthesis)
     const formattedValue = value.replace(/[^\d\s\-\+\(\)]/g, '');
     handleInputChange(field, formattedValue);
   };
 
   const validate = () => {
+    if (!data) return false;
     const newErrors: Record<string, string> = {};
     const { phoneNumber, personalEmail, emergencyContactName, emergencyContactNumber } = data.personalDetails;
     
-    
-    if (!phoneNumber.trim()) {
+    if (!phoneNumber?.trim()) {
       newErrors.phoneNumber = "Required";
     } else if (!/^\+?[\d\s\-\(\)]+$/.test(phoneNumber)) {
       newErrors.phoneNumber = "Invalid phone format";
     }
 
-    if (!personalEmail.trim()) {
+    if (!personalEmail?.trim()) {
       newErrors.personalEmail = "Required";
     } else if (!/^\S+@\S+\.\S+$/.test(personalEmail)) {
       newErrors.personalEmail = "Invalid email format";
     }
 
-    if (!emergencyContactName.trim()) newErrors.emergencyContactName = "Required";
+    if (!emergencyContactName?.trim()) newErrors.emergencyContactName = "Required";
     
-    if (!emergencyContactNumber.trim()) {
+    if (!emergencyContactNumber?.trim()) {
       newErrors.emergencyContactNumber = "Required";
     } else if (!/^\+?[\d\s\-\(\)]+$/.test(emergencyContactNumber)) {
       newErrors.emergencyContactNumber = "Invalid phone format";
@@ -100,15 +134,36 @@ const Profile: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const toggleEdit = () => {
+  const toggleEdit = async () => {
     if (isEditing) {
-      if (validate()) {
-        setIsEditing(false);
+      if (validate() && data) {
+        try {
+          const updateDto = {
+            phoneNumber: data.personalDetails.phoneNumber,
+            personalEmail: data.personalDetails.personalEmail,
+            emergencyContactName: data.personalDetails.emergencyContactName,
+            emergencyContactNumber: data.personalDetails.emergencyContactNumber
+          };
+          const response = await updateProfileApi(updateDto);
+          if (response.success) {
+            setData(response.data);
+            setIsEditing(false);
+          }
+        } catch (err: any) {
+          alert(err.message || "Failed to update profile");
+        }
       }
     } else {
       setIsEditing(true);
     }
   };
+
+  if (loading) return <div className="profile-container"><Text>Loading profile...</Text></div>;
+  if (error) return <div className="profile-container"><Text color="red">{error}</Text></div>;
+  if (!data) return <div className="profile-container"><Text>No profile data found</Text></div>;
+
+  const defaultAvatar = "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&q=80";
+  const defaultManagerAvatar = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&q=80";
 
   return (
     <div className="profile-container">
@@ -123,7 +178,7 @@ const Profile: React.FC = () => {
               style={{ display: 'none' }} 
               onChange={handleAvatarChange} 
             />
-            <img src={data.avatar} alt="Profile" className="profile-avatar" />
+            <img src={data.avatar || defaultAvatar} alt="Profile" className="profile-avatar" />
             {isEditing && (
               <div className="camera-icon" onClick={() => fileInputRef.current?.click()}>📷</div>
             )}
@@ -134,34 +189,36 @@ const Profile: React.FC = () => {
               <div className="badge-tag">{data.id}</div>
             </div>
             <SizedBox height={4} />
-            <Text size="16px" color="#505F76" weight="600">{data.role}</Text>
+            <Text size="16px" color="#505F76" weight="600">{data.role || "N/A"}</Text>
             <SizedBox height={16} />
             <div className="info-row">
               <span className="icon">🏢</span>
-              <Text size="14px" color="#505F76">{data.department}</Text>
+              <Text size="14px" color="#505F76">{data.department || "N/A"}</Text>
             </div>
             <SizedBox height={8} />
             <div className="info-row">
               <span className="icon">📅</span>
-              <Text size="14px" color="#505F76">Joined {data.joinedDate}</Text>
+              <Text size="14px" color="#505F76">Joined {data.joinedDate || "N/A"}</Text>
             </div>
           </div>
         </div>
 
-        <div className="reports-to-card">
-          <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">REPORTS TO</Text>
-          <SizedBox height={12} />
-          <div className="manager-info">
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img src={profileData.reportsTo.avatar} alt="Manager" className="manager-avatar" />
-              <div style={{ marginLeft: '12px' }}>
-                <Text size="14px" weight="bold">{profileData.reportsTo.name}</Text>
-                <Text size="12px" color="#64748B">{profileData.reportsTo.role}</Text>
+        {data.reportsTo && (
+          <div className="reports-to-card">
+            <Text size="10px" weight="bold" color="#64748B" letterSpacing="1px">REPORTS TO</Text>
+            <SizedBox height={12} />
+            <div className="manager-info">
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img src={data.reportsTo.avatar || defaultManagerAvatar} alt="Manager" className="manager-avatar" />
+                <div style={{ marginLeft: '12px' }}>
+                  <Text size="14px" weight="bold">{data.reportsTo.name}</Text>
+                  <Text size="12px" color="#64748B">{data.reportsTo.role || "N/A"}</Text>
+                </div>
               </div>
+              <div className="chat-icon">💬</div>
             </div>
-            <div className="chat-icon">💬</div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="profile-content-grid">
@@ -169,7 +226,7 @@ const Profile: React.FC = () => {
         <div className="personal-details-card">
           <div className="card-header-row">
             <Text size="20px" weight="bold">Personal Details</Text>
-            <Text size="12px" color="#9CA3AF">Last updated: 2 days ago</Text>
+            <Text size="12px" color="#9CA3AF">Last updated: Just now</Text>
           </div>
           <SizedBox height={24} />
           
@@ -199,7 +256,7 @@ const Profile: React.FC = () => {
               <SizedBox height={8} />
               {isEditing ? (
                 <>
-                  <input type="tel" className="input-field full-width" style={errors.phoneNumber ? { borderColor: 'red' } : {}} value={data.personalDetails.phoneNumber} onChange={(e) => handlePhoneChange('phoneNumber', e.target.value)} />
+                  <input type="tel" className="input-field full-width" style={errors.phoneNumber ? { borderColor: 'red' } : {}} value={data.personalDetails.phoneNumber || ""} onChange={(e) => handlePhoneChange('phoneNumber', e.target.value)} />
                   {errors.phoneNumber && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.phoneNumber}</div>}
                 </>
               ) : (
@@ -211,7 +268,7 @@ const Profile: React.FC = () => {
               <SizedBox height={8} />
               {isEditing ? (
                 <>
-                  <input type="email" className="input-field full-width" style={errors.personalEmail ? { borderColor: 'red' } : {}} value={data.personalDetails.personalEmail} onChange={(e) => handleInputChange('personalEmail', e.target.value)} />
+                  <input type="email" className="input-field full-width" style={errors.personalEmail ? { borderColor: 'red' } : {}} value={data.personalDetails.personalEmail || ""} onChange={(e) => handleInputChange('personalEmail', e.target.value)} />
                   {errors.personalEmail && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.personalEmail}</div>}
                 </>
               ) : (
@@ -230,7 +287,7 @@ const Profile: React.FC = () => {
               <SizedBox height={8} />
               {isEditing ? (
                 <>
-                  <input className="input-field full-width" style={errors.emergencyContactName ? { borderColor: 'red' } : {}} value={data.personalDetails.emergencyContactName} onChange={(e) => handleInputChange('emergencyContactName', e.target.value)} />
+                  <input className="input-field full-width" style={errors.emergencyContactName ? { borderColor: 'red' } : {}} value={data.personalDetails.emergencyContactName || ""} onChange={(e) => handleInputChange('emergencyContactName', e.target.value)} />
                   {errors.emergencyContactName && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.emergencyContactName}</div>}
                 </>
               ) : (
@@ -243,7 +300,7 @@ const Profile: React.FC = () => {
               <SizedBox height={8} />
               {isEditing ? (
                 <>
-                  <input type="tel" className="input-field full-width" style={errors.emergencyContactNumber ? { borderColor: 'red' } : {}} value={data.personalDetails.emergencyContactNumber} onChange={(e) => handlePhoneChange('emergencyContactNumber', e.target.value)} />
+                  <input type="tel" className="input-field full-width" style={errors.emergencyContactNumber ? { borderColor: 'red' } : {}} value={data.personalDetails.emergencyContactNumber || ""} onChange={(e) => handlePhoneChange('emergencyContactNumber', e.target.value)} />
                   {errors.emergencyContactNumber && <div style={{ color: 'red', fontSize: '10px', marginTop: '4px' }}>{errors.emergencyContactNumber}</div>}
                 </>
               ) : (
@@ -266,61 +323,47 @@ const Profile: React.FC = () => {
             <Text size="18px" weight="bold">Work Access</Text>
             <SizedBox height={24} />
             
-            <div className="access-item">
-              <div className="access-icon-wrapper">{profileData.workAccess.badgeAccess.icon}</div>
-              <div className="access-info">
-                <Text size="14px" weight="bold">Badge Access</Text>
-                <Text size="12px" color="#64748B">{profileData.workAccess.badgeAccess.level}</Text>
-              </div>
-            </div>
-            
-            <SizedBox height={16} />
-            
-            <div className="access-item">
-              <div className="access-icon-wrapper">{profileData.workAccess.gitAccount.icon}</div>
-              <div className="access-info">
-                <Text size="14px" weight="bold">Git Account</Text>
-                <Text size="12px" color="#64748B">{profileData.workAccess.gitAccount.username}</Text>
-              </div>
-            </div>
+            {data.workAccess.map((access, index) => (
+              <React.Fragment key={index}>
+                <div className="access-item">
+                  <div className="access-icon-wrapper">{access.icon}</div>
+                  <div className="access-info">
+                    <Text size="14px" weight="bold">{access.type === 'BADGE' ? 'Badge Access' : 'Git Account'}</Text>
+                    <Text size="12px" color="#64748B">{access.level || access.value}</Text>
+                  </div>
+                </div>
+                {index < data.workAccess.length - 1 && <SizedBox height={16} />}
+              </React.Fragment>
+            ))}
+            {data.workAccess.length === 0 && <Text size="14px" color="#64748B">No work access data</Text>}
           </div>
 
           <div className="leave-balance-card">
             <div className="card-header-row">
               <Text size="18px" weight="bold">Leave Balance</Text>
-              <div className="year-tag">2024</div>
+              <div className="year-tag">{new Date().getFullYear()}</div>
             </div>
             <SizedBox height={24} />
             
-            <div className="leave-item">
-              <div className="leave-header">
-                <Text size="12px" weight="600" color="#505F76">Vacation Days</Text>
-                <Text size="12px" weight="bold">{profileData.leaveBalance.vacationDays.used} / {profileData.leaveBalance.vacationDays.total} Days</Text>
-              </div>
-              <SizedBox height={8} />
-              <div className="progress-bar-bg">
-                <div 
-                  className="progress-bar-fill" 
-                  style={{ width: `${(profileData.leaveBalance.vacationDays.used / profileData.leaveBalance.vacationDays.total) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            <SizedBox height={20} />
-
-            <div className="leave-item">
-              <div className="leave-header">
-                <Text size="12px" weight="600" color="#505F76">Sick Leave</Text>
-                <Text size="12px" weight="bold">{profileData.leaveBalance.sickLeave.used} / {profileData.leaveBalance.sickLeave.total} Days</Text>
-              </div>
-              <SizedBox height={8} />
-              <div className="progress-bar-bg">
-                <div 
-                  className="progress-bar-fill" 
-                  style={{ width: `${(profileData.leaveBalance.sickLeave.used / profileData.leaveBalance.sickLeave.total) * 100}%` }}
-                />
-              </div>
-            </div>
+            {data.leaveBalance.map((leave, index) => (
+              <React.Fragment key={index}>
+                <div className="leave-item">
+                  <div className="leave-header">
+                    <Text size="12px" weight="600" color="#505F76">{leave.leaveType}</Text>
+                    <Text size="12px" weight="bold">{leave.used} / {leave.total} Days</Text>
+                  </div>
+                  <SizedBox height={8} />
+                  <div className="progress-bar-bg">
+                    <div 
+                      className="progress-bar-fill" 
+                      style={{ width: `${(leave.used / leave.total) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                {index < data.leaveBalance.length - 1 && <SizedBox height={20} />}
+              </React.Fragment>
+            ))}
+            {data.leaveBalance.length === 0 && <Text size="14px" color="#64748B">No leave balance data</Text>}
           </div>
         </div>
       </div>
