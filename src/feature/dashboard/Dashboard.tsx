@@ -14,10 +14,14 @@ import Profile from '../profile/Profile';
 import Leave from '../leave/Leave';
 import Attendance from '../attendance/Attendance';
 import DashboardHome from './DashboardHome';
+import AdminDashboardHome from './AdminDashboardHome';
+import EmployeeManagement from '../admin/EmployeeManagement';
 
 function Dashboard() {
 
-  const navItems = [
+  const role = sessionStorage.getItem('role') || 'ROLE_EMPLOYEE';
+
+  const employeeNavItems = [
     { id: "dashboard", label: "Dashboard", icon: dashboardLogo },
     { id: "attendance", label: "Attendance", icon: attendanceLogo },
     { id: "leave", label: "Leave Request", icon: leaveLogo },
@@ -25,6 +29,17 @@ function Dashboard() {
     { id: "support", label: "Support", icon: supportLogo },
     { id: "logout", label: "Logout", icon: LogoutLogo },
   ];
+
+  const adminNavItems = [
+    { id: "dashboard", label: "Dashboard", icon: dashboardLogo },
+    { id: "employees", label: "Employees", icon: profileLogo },
+    { id: "attendance", label: "Attendance", icon: attendanceLogo },
+    { id: "leave", label: "Leave Requests", icon: leaveLogo },
+    { id: "support", label: "Support", icon: supportLogo },
+    { id: "logout", label: "Logout", icon: LogoutLogo },
+  ];
+
+  const navItems = role === 'admin' ? adminNavItems : employeeNavItems;
   const { tabId } = useParams();
   const navigate = useNavigate();
   const activeNav = tabId || "dashboard";
@@ -35,6 +50,27 @@ function Dashboard() {
     sessionStorage.clear();
     navigate('/login');
   };
+
+  const renderContent = () => {
+    if (role === 'admin') {
+      switch (activeNav) {
+        case 'dashboard': return <AdminDashboardHome />;
+        case 'employees': return <EmployeeManagement />;
+        case 'attendance': return <div>Attendance Management (Admin)</div>;
+        case 'leave': return <div>Leave Approval (Admin)</div>;
+        default: return activeNav;
+      }
+    } else {
+      switch (activeNav) {
+        case 'dashboard': return <DashboardHome />;
+        case 'profile': return <Profile />;
+        case 'leave': return <Leave />;
+        case 'attendance': return <Attendance />;
+        default: return activeNav;
+      }
+    }
+  };
+
   return (
     <div style={{display: "flex", width: '100%', minHeight: '100vh', margin: '0px'}}>
       <div className='drawer-container'>
@@ -59,9 +95,9 @@ function Dashboard() {
         </div>
         <SizedBox height={32}></SizedBox>
         <div className='role-card' style={{padding: '16px', backgroundColor: '#ECEEF0'}}>
-          <Text size={12} weight='bold'> Junior Associate</Text>
+          <Text size={12} weight='bold'> {role === 'ROLE_ADMIN' ? 'Administrator' : 'Junior Associate'}</Text>
           <SizedBox height={4}></SizedBox>
-          <Text size={10} weight='normal' >Logged in for 4h 12m</Text>
+          <Text size={10} weight='normal' >{role === 'ROLE_ADMIN' ? 'Full Access' : 'Logged in for 4h 12m'}</Text>
         </div>
 
       </div>
@@ -72,7 +108,7 @@ function Dashboard() {
           </div>
         )}
         <div style={{ flex: 1 }}>
-          {activeNav === 'dashboard' ? <DashboardHome /> : activeNav === 'profile' ? <Profile /> : activeNav === 'leave' ? <Leave /> : activeNav === 'attendance' ? <Attendance /> : activeNav}
+          {renderContent()}
         </div>
       </div>
       {isLogoutModalOpen && (

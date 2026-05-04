@@ -9,8 +9,9 @@ type TextProps = {
   weight?: string | number;
   height?: string | number;
   align?: "left" | "center" | "right";
-  cursor?: string & {};
+  cursor?: React.CSSProperties['cursor'];
   letterSpacing?: string | number;
+  style?: React.CSSProperties;
 };
 
 const Text: React.FC<TextProps> = ({
@@ -20,8 +21,9 @@ const Text: React.FC<TextProps> = ({
   color = AppColors.text.primary,
   weight = "normal",
   align = "left",
-  cursor = null,
-  letterSpacing = null,
+  cursor,
+  letterSpacing,
+  style
 }) => {
   return (
     <p
@@ -33,7 +35,8 @@ const Text: React.FC<TextProps> = ({
         textAlign: align,
         margin: 0,
         cursor: cursor,
-        letterSpacing: letterSpacing, 
+        letterSpacing: letterSpacing,
+        ...style
       }}
     >
       {children}

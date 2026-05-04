@@ -1,7 +1,7 @@
 export const BASE_URL = 'http://localhost:8010/api';
 
-const getAuthHeader = () => {
-  const token = localStorage.getItem('accessToken');
+const getAuthHeader = (): HeadersInit => {
+  const token = sessionStorage.getItem('access_token');
   return token ? { 'Authorization': `Bearer ${token}` } : {};
 };
 
@@ -20,11 +20,8 @@ export const loginApi = async (email: string, password: string) => {
   }
 
   const result = await response.json();
-  if (result.success && result.data.accessToken) {
-    localStorage.setItem('accessToken', result.data.accessToken);
-    localStorage.setItem('refreshToken', result.data.refreshToken);
-  }
-  return result;
+  // Return data directly if nested
+  return result.data || result;
 };
 
 export const getProfileApi = async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Text from '../../components/Text';
 import SizedBox from '../../components/SizedBox';
 import { AppColors } from '../../core/colors';
@@ -33,7 +33,7 @@ const Leave = () => {
   const [history, setHistory] = useState(leaveHistoryData);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const handleLeaveSubmit = (selectedDates: Date[], leaveType: string, reason: string) => {
+  const handleLeaveSubmit = (selectedDates: Date[], leaveType: string, _reason: string) => {
     // Format dates for display
     const formatDate = (date: Date) => {
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

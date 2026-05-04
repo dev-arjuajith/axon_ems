@@ -29,6 +29,9 @@ const LoginPage = () => {
       const data = await loginApi(email, password);
       
       sessionStorage.setItem('access_token', data.access_token || data.accessToken || data.token);
+      if (data.role) {
+        sessionStorage.setItem('role', data.role);
+      }
       if (data.refresh_token || data.refreshToken) {
         sessionStorage.setItem('refresh_token', data.refresh_token || data.refreshToken);
       }

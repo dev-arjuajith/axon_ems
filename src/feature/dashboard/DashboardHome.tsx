@@ -1,4 +1,3 @@
-import React from 'react';
 import './DashboardHome.css';
 import Text from '../../components/Text';
 import SizedBox from '../../components/SizedBox';
