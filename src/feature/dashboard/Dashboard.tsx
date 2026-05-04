@@ -32,14 +32,14 @@ function Dashboard() {
 
   const adminNavItems = [
     { id: "dashboard", label: "Dashboard", icon: dashboardLogo },
-    { id: "employees", label: "Employees", icon: profileLogo },
+    { id: "user_management", label: "User Management", icon: profileLogo },
     { id: "attendance", label: "Attendance", icon: attendanceLogo },
     { id: "leave", label: "Leave Requests", icon: leaveLogo },
     { id: "support", label: "Support", icon: supportLogo },
     { id: "logout", label: "Logout", icon: LogoutLogo },
   ];
 
-  const navItems = role === 'admin' ? adminNavItems : employeeNavItems;
+  const navItems = role === 'ROLE_ADMIN' ? adminNavItems : employeeNavItems;
   const { tabId } = useParams();
   const navigate = useNavigate();
   const activeNav = tabId || "dashboard";
@@ -52,10 +52,10 @@ function Dashboard() {
   };
 
   const renderContent = () => {
-    if (role === 'admin') {
+    if (role === 'ROLE_ADMIN') {
       switch (activeNav) {
         case 'dashboard': return <AdminDashboardHome />;
-        case 'employees': return <EmployeeManagement />;
+        case 'user_management': return <EmployeeManagement />;
         case 'attendance': return <div>Attendance Management (Admin)</div>;
         case 'leave': return <div>Leave Approval (Admin)</div>;
         default: return activeNav;
