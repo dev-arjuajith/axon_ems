@@ -16,6 +16,8 @@ import Attendance from '../attendance/Attendance';
 import DashboardHome from './DashboardHome';
 import AdminDashboardHome from './AdminDashboardHome';
 import EmployeeManagement from '../admin/EmployeeManagement';
+import RolesMapping from '../admin/RolesMapping';
+import AnnouncementCreator from '../admin/AnnouncementCreator';
 
 function Dashboard() {
 
@@ -33,6 +35,8 @@ function Dashboard() {
   const adminNavItems = [
     { id: "dashboard", label: "Dashboard", icon: dashboardLogo },
     { id: "user_management", label: "User Management", icon: profileLogo },
+    { id: "roles_mapping", label: "Roles & Mapping", icon: attendanceLogo },
+    { id: "announcements", label: "Announcements", icon: leaveLogo },
     { id: "attendance", label: "Attendance", icon: attendanceLogo },
     { id: "leave", label: "Leave Requests", icon: leaveLogo },
     { id: "support", label: "Support", icon: supportLogo },
@@ -56,6 +60,8 @@ function Dashboard() {
       switch (activeNav) {
         case 'dashboard': return <AdminDashboardHome />;
         case 'user_management': return <EmployeeManagement />;
+        case 'roles_mapping': return <RolesMapping />;
+        case 'announcements': return <AnnouncementCreator />;
         case 'attendance': return <div>Attendance Management (Admin)</div>;
         case 'leave': return <div>Leave Approval (Admin)</div>;
         default: return activeNav;

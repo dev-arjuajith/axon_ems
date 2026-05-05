@@ -3,6 +3,10 @@ import Text from '../../components/Text';
 import SizedBox from '../../components/SizedBox';
 import officeInterior from '../../assets/office_interior.png';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getAnnouncementsApi } from '../../core/api';
+
+interface Announcement { id: number; title: string; description: string; imageUrl?: string; createdBy: string; createdAt: string; }
 
 
 // --- Mock Data ---
@@ -118,6 +122,14 @@ const ArrowRightIcon = () => (
 
 export default function DashboardHome() {
   const navigate = useNavigate();
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [annIdx, setAnnIdx] = useState(0);
+
+  useEffect(() => {
+    getAnnouncementsApi(0, 5).then(r => { if (r.success) setAnnouncements(r.data.content); }).catch(() => {});
+  }, []);
+
+  const latestAnn = announcements[annIdx] || null;
   return (
     <div className="dashboard-home">
       {/* Top Header */}
@@ -199,29 +211,43 @@ export default function DashboardHome() {
 
         {/* Right Column */}
         <div className="dh-col-right">
-          {/* Town Hall Card */}
+          {/* Announcement Card */}
           <div className="card townhall-card">
-            <div className="th-image" style={{ backgroundImage: `url(${officeInterior})` }}>
-              <span className="th-tag">{mockData.update.tag}</span>
-            </div>
-            <div className="th-content">
-              <Text size={20} weight="bold" color="#0F172A">{mockData.update.title}</Text>
-              <SizedBox height={16} />
-              <Text size={14} color="#6B7280" style={{ lineHeight: '1.5' }}>{mockData.update.description}</Text>
-              <div className="th-footer">
-                <div className="th-author">
-                  <img src={mockData.update.authorAvatar} alt="author" />
-                  <div>
-                    <Text size={12} weight="bold" color="#0F172A">{mockData.update.author}</Text>
-                    <Text size={10} color="#6B7280">{mockData.update.authorRole}</Text>
+            {latestAnn ? (
+              <>
+                <div className="th-image" style={{ backgroundImage: latestAnn.imageUrl ? `url(${latestAnn.imageUrl})` : `url(${officeInterior})` }}>
+                  <span className="th-tag">ANNOUNCEMENT</span>
+                </div>
+                <div className="th-content">
+                  <Text size={20} weight="bold" color="#0F172A">{latestAnn.title}</Text>
+                  <SizedBox height={16} />
+                  <Text size={14} color="#6B7280" style={{ lineHeight: '1.5' }}>{latestAnn.description}</Text>
+                  <div className="th-footer">
+                    <div className="th-author">
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text size={12} weight="bold" color="#64748B">{latestAnn.createdBy?.[0] ?? 'A'}</Text>
+                      </div>
+                      <div>
+                        <Text size={12} weight="bold" color="#0F172A">{latestAnn.createdBy}</Text>
+                        <Text size={10} color="#6B7280">{latestAnn.createdAt}</Text>
+                      </div>
+                    </div>
+                    {announcements.length > 1 && (
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {announcements.map((_, i) => (
+                          <button key={i} onClick={() => setAnnIdx(i)}
+                            style={{ width: '8px', height: '8px', borderRadius: '50%', border: 'none', cursor: 'pointer', backgroundColor: i === annIdx ? '#0F172A' : '#CBD5E1', padding: 0 }} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="th-read-more">
-                  <Text size={12} weight="bold" color="#0F172A">Read More</Text>
-                  <ArrowRightIcon />
-                </div>
+              </>
+            ) : (
+              <div className="th-content" style={{ padding: '32px' }}>
+                <Text size={16} color="#9CA3AF">No announcements yet.</Text>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Stats Row */}
